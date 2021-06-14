@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { IProduct } from './IProduct';
 
 @Component({
   selector: 'app-product-list',
@@ -6,17 +7,32 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./product-list.component.scss']
 })
 export class ProductListComponent implements OnInit {
+  performFilter(value: string): IProduct[] {
+    value = value.toLocaleLowerCase();
+    return this.products.filter((x: IProduct) => x.productName.toLocaleLowerCase().includes(value));
+  }
 
   constructor() { }
 
   ngOnInit(): void {
+    this.listFilter = '';
   }
+  private _listFilter: string = '';
+
+  get listFilter() {
+    return this._listFilter;
+  }
+  set listFilter(value: string) {
+    this._listFilter = value;
+    this.filteredProducts = this.performFilter(value);
+  }
+
   showImage = false;
   imageWidth = 50;
   imageMargin = 2;
   pageTitle = "Product List";
-  listFilter = 'cart';
-  products: any[] = [
+  filteredProducts: IProduct[] = [];
+  products: IProduct[] = [
     {
       "productId": 1,
       "productName": "Leaf Rake",
@@ -68,7 +84,10 @@ export class ProductListComponent implements OnInit {
       "imageUrl": "assets/images/xbox-controller.png"
     }
   ];
+
   toogleImage(): void {
     this.showImage = !this.showImage;
   }
+
+
 }
