@@ -19,6 +19,16 @@ export class ProductListComponent implements OnInit, OnDestroy {
 
   sub!: Subscription;
 
+  private _listFilter: string = '';
+
+  get listFilter() {
+    return this._listFilter;
+  }
+  set listFilter(value: string) {
+    this._listFilter = value;
+    this.filteredProducts = this.performFilter(value);
+  }
+
   performFilter(value: string): IProduct[] {
     value = value.toLocaleLowerCase();
     return this.products.filter((x: IProduct) => x.productName.toLocaleLowerCase().includes(value));
@@ -43,17 +53,7 @@ export class ProductListComponent implements OnInit, OnDestroy {
     );
     this.listFilter = '';
   }
-  private _listFilter: string = '';
-
-  get listFilter() {
-    return this._listFilter;
-  }
-  set listFilter(value: string) {
-    this._listFilter = value;
-    this.filteredProducts = this.performFilter(value);
-  }
-
-
+  
   toogleImage(): void {
     this.showImage = !this.showImage;
   }
