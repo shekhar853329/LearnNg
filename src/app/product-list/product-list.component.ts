@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { IProduct } from './IProduct';
 import { ProductService } from './product.service';
 
@@ -7,7 +8,16 @@ import { ProductService } from './product.service';
   templateUrl: './product-list.component.html',
   styleUrls: ['./product-list.component.scss']
 })
-export class ProductListComponent implements OnInit {
+export class ProductListComponent implements OnInit, OnDestroy {
+  showImage = false;
+  imageWidth = 50;
+  imageMargin = 2;
+  pageTitle = "Product List";
+  filteredProducts: IProduct[] = [];
+  products: IProduct[] = [];
+  errormessage = '';
+
+  sub!: Subscription;
 
   performFilter(value: string): IProduct[] {
     value = value.toLocaleLowerCase();
@@ -16,8 +26,21 @@ export class ProductListComponent implements OnInit {
 
   constructor(private service: ProductService) { }
 
+  ngOnDestroy(): void {
+    this.sub.unsubscribe();
+  }
+
   ngOnInit(): void {
-    this.products = this.service.getProducts();
+    this.sub = this.service.getProducts().subscribe(
+      data => {
+        this.products = data
+        this.filteredProducts = this.products
+      }
+      ,
+      error => {
+        this.errormessage = error; console.log(this.errormessage);
+      }
+    );
     this.listFilter = '';
   }
   private _listFilter: string = '';
@@ -26,16 +49,10 @@ export class ProductListComponent implements OnInit {
     return this._listFilter;
   }
   set listFilter(value: string) {
-    this._listFilter = value;    
+    this._listFilter = value;
     this.filteredProducts = this.performFilter(value);
   }
 
-  showImage = false;
-  imageWidth = 50;
-  imageMargin = 2;
-  pageTitle = "Product List";
-  filteredProducts: IProduct[] = [];
-  products: IProduct[] = [];
 
   toogleImage(): void {
     this.showImage = !this.showImage;
