@@ -40,11 +40,20 @@
                 [style.margin.px]="imageMargin"
               />
             </td>
-            <td>{{ product.productName }}</td>
+            <td>
+              <a [routerLink]="['/products', product.productId]">{{
+                product.productName
+              }}</a>
+            </td>
             <td>{{ product.productCode | convertToSpaces: "-" }}</td>
             <td>{{ product.releaseDate }}</td>
             <td>{{ product.price | currency }}</td>
-            <td><app-star [rating]="product.starRating" (notify)="onRatingChange($event)"></app-star></td>
+            <td>
+              <app-star
+                [rating]="product.starRating"
+                (notify)="onRatingChange($event)"
+              ></app-star>
+            </td>
           </tr>
         </tbody>
       </table>
